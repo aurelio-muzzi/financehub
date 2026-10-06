@@ -10,6 +10,8 @@ import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { ForgotPasswordPage } from '@/features/auth/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '@/features/auth/pages/ResetPasswordPage';
 import { SecuritySettingsPage } from '@/features/settings/pages/SecuritySettingsPage';
+import { CategoriesPage } from '@/features/categories/pages/CategoriesPage';
+import { AccountsPage } from '@/features/accounts/pages/AccountsPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -28,8 +30,8 @@ export const AppRoutes: React.FC = () => {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<DashboardPage />} />
-          <Route path="/accounts" element={<DashboardPage />} />
-          <Route path="/categories" element={<DashboardPage />} />
+          <Route path="/accounts" element={<AccountsPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/reports" element={<DashboardPage />} />
           <Route path="/settings/profile" element={<SecuritySettingsPage />} />
           <Route path="/settings/security" element={<SecuritySettingsPage />} />

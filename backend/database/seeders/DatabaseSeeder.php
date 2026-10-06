@@ -50,5 +50,7 @@ class DatabaseSeeder extends Seeder
                 ],
             ]
         );
+
+        $this->call(CategoryAndAccountSeeder::class);
     }
 }
