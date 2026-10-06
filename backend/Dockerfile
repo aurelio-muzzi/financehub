@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Instalar dependências de sistema e extensões PHP necessárias para PostgreSQL, bcmath e GD
 RUN apk update && apk add --no-cache \
@@ -24,10 +24,15 @@ WORKDIR /var/www/html
 # Copiar código da aplicação
 COPY . .
 
+# Copiar e configurar script de entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Permissões de armazenamento do Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8000
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
