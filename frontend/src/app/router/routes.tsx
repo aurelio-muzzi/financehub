@@ -9,7 +9,9 @@ import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { ForgotPasswordPage } from '@/features/auth/pages/ForgotPasswordPage';
 import { ResetPasswordPage } from '@/features/auth/pages/ResetPasswordPage';
-import { SecuritySettingsPage } from '@/features/settings/pages/SecuritySettingsPage';
+import { SettingsPage } from '@/features/settings/pages/SettingsPage';
+import { AdminUsersPage } from '@/features/admin/pages/AdminUsersPage';
+import { AdminAuditPage } from '@/features/admin/pages/AdminAuditPage';
 import { CategoriesPage } from '@/features/categories/pages/CategoriesPage';
 import { AccountsPage } from '@/features/accounts/pages/AccountsPage';
 import { TransactionsPage } from '@/features/transactions/pages/TransactionsPage';
@@ -35,13 +37,14 @@ export const AppRoutes: React.FC = () => {
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/settings/profile" element={<SecuritySettingsPage />} />
-          <Route path="/settings/security" element={<SecuritySettingsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/profile" element={<SettingsPage />} />
+          <Route path="/settings/security" element={<SettingsPage />} />
 
           {/* Área Administrativa com RBAC */}
           <Route element={<AdminRoute />}>
-            <Route path="/admin/users" element={<DashboardPage />} />
-            <Route path="/admin/audit-logs" element={<DashboardPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/audit-logs" element={<AdminAuditPage />} />
           </Route>
         </Route>
       </Route>

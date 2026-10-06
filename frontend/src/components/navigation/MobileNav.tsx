@@ -9,6 +9,7 @@ import {
   BarChart3,
   Settings,
   ShieldCheck,
+  History,
 } from 'lucide-react';
 import { useUiStore } from '@/stores/useUiStore';
 
@@ -28,8 +29,14 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isAdmin = false }) => {
     { label: 'Contas', to: '/accounts', icon: <Wallet size={20} /> },
     { label: 'Categorias', to: '/categories', icon: <Tag size={20} /> },
     { label: 'Relatórios', to: '/reports', icon: <BarChart3 size={20} /> },
-    { label: 'Configurações', to: '/settings/profile', icon: <Settings size={20} /> },
-    { label: 'Admin', to: '/admin/users', icon: <ShieldCheck size={20} />, isAdmin: true },
+    { label: 'Configurações', to: '/settings', icon: <Settings size={20} /> },
+    {
+      label: 'Usuários (RBAC)',
+      to: '/admin/users',
+      icon: <ShieldCheck size={20} />,
+      isAdmin: true,
+    },
+    { label: 'Auditoria', to: '/admin/audit-logs', icon: <History size={20} />, isAdmin: true },
   ];
 
   return (
