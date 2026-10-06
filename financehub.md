@@ -12,8 +12,9 @@ financehub/
 ├── backend/                   # API REST Laravel
 │   ├── app/
 │   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   ├── Requests/
+│   │   │   ├── Controllers/Api/V1/
+│   │   │   ├── Middleware/
+│   │   │   ├── Requests/Auth/
 │   │   │   └── Resources/
 │   │   ├── Models/
 │   │   ├── Policies/
@@ -24,13 +25,13 @@ financehub/
 │   │   └── seeders/
 │   ├── routes/
 │   │   └── api.php
-│   ├── tests/
+│   ├── tests/Feature/
 │   ├── phpstan.neon
 │   └── Dockerfile
 │
 ├── frontend/                  # SPA React TypeScript
 │   ├── src/
-│   │   ├── app/               # Providers, layouts e router
+│   │   ├── app/               # Providers, layouts e router (guards)
 │   │   ├── components/        # UI atômica, forms, feedback e navegação
 │   │   ├── features/          # Domínios verticais (auth, dashboard, accounts, etc.)
 │   │   ├── hooks/             # Custom hooks globais
@@ -51,9 +52,14 @@ financehub/
 └── financehub.md
 ```
 
-## 3. Comandos de Validação e Qualidade
+## 3. Estado das Etapas
+* [x] **Etapa 0 — Análise e Planejamento**
+* [x] **Etapa 1 — Foundation** (Infraestrutura, Laravel, React, TypeScript, Docker, Testes)
+* [x] **Etapa 2 — Autenticação e RBAC** (Sanctum SPA, AuthController, UserPolicy, AuthProvider, Route Guards, LoginPage)
+
+## 4. Comandos de Validação e Qualidade
 * **Backend Pint:** `cd backend && .\vendor\bin\pint`
-* **Backend Larastan:** `cd backend && .\vendor\bin\phpstan analyse`
+* **Backend Larastan:** `cd backend && .\vendor\bin\phpstan analyse --memory-limit=1G`
 * **Backend Testes:** `cd backend && php artisan test`
 * **Frontend Lint:** `cd frontend && npm run lint`
 * **Frontend Testes:** `cd frontend && npm run test`
