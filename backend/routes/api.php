@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -28,5 +29,9 @@ Route::prefix('v1')->group(function () {
         // Contas Financeiras
         Route::get('accounts/{account}/balance', [AccountController::class, 'balance']);
         Route::apiResource('accounts', AccountController::class);
+
+        // Transações
+        Route::get('transactions/summary', [TransactionController::class, 'summary']);
+        Route::apiResource('transactions', TransactionController::class);
     });
 });
