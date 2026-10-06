@@ -56,6 +56,8 @@ financehub/
 * [x] **Etapa 0 — Análise e Planejamento**
 * [x] **Etapa 1 — Foundation** (Infraestrutura, Laravel, React, TypeScript, Docker, Testes)
 * [x] **Etapa 2 — Autenticação e RBAC** (Sanctum SPA, AuthController, UserPolicy, AuthProvider, Route Guards, LoginPage)
+* [x] **Etapa 3 — Contas e Categorias** (CRUD, API Resources, Políticas, Frontend React, TanStack Query, Testes)
+* [ ] **Etapa 4 — Transações, Extrato e Relacionamentos** (Em andamento)
 
 ## 4. Comandos de Validação e Qualidade
 * **Backend Pint:** `cd backend && .\vendor\bin\pint`
