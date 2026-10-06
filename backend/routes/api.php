@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,5 +35,20 @@ Route::prefix('v1')->group(function () {
         // Transações
         Route::get('transactions/summary', [TransactionController::class, 'summary']);
         Route::apiResource('transactions', TransactionController::class);
+
+        // Dashboard & Analytics
+        Route::prefix('dashboard')->group(function () {
+            Route::get('metrics', [DashboardController::class, 'metrics']);
+            Route::get('cash-flow', [DashboardController::class, 'cashFlow']);
+            Route::get('expenses-by-category', [DashboardController::class, 'expensesByCategory']);
+            Route::get('recent-transactions', [DashboardController::class, 'recentTransactions']);
+        });
+
+        // Relatórios e Exportações
+        Route::prefix('reports')->group(function () {
+            Route::get('analytics', [ReportController::class, 'analytics']);
+            Route::get('export/csv', [ReportController::class, 'exportCsv']);
+            Route::get('export/pdf', [ReportController::class, 'exportPdf']);
+        });
     });
 });

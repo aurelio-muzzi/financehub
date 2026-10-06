@@ -13,6 +13,7 @@ import { SecuritySettingsPage } from '@/features/settings/pages/SecuritySettings
 import { CategoriesPage } from '@/features/categories/pages/CategoriesPage';
 import { AccountsPage } from '@/features/accounts/pages/AccountsPage';
 import { TransactionsPage } from '@/features/transactions/pages/TransactionsPage';
+import { ReportsPage } from '@/features/reports/pages/ReportsPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -33,7 +34,7 @@ export const AppRoutes: React.FC = () => {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/reports" element={<DashboardPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="/settings/profile" element={<SecuritySettingsPage />} />
           <Route path="/settings/security" element={<SecuritySettingsPage />} />
 
