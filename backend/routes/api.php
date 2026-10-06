@@ -27,8 +27,8 @@ Route::prefix('v1')->group(function () {
         });
     });
 
-    // Recursos autenticados da aplicação
-    Route::middleware('auth:sanctum')->group(function () {
+    // Recursos autenticados da aplicação com rate limiting
+    Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
         // Categorias
         Route::apiResource('categories', CategoryController::class);
 

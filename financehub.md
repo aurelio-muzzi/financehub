@@ -60,7 +60,7 @@ financehub/
 * [x] **Etapa 4 — Transações, Extrato e Relacionamentos** (CRUD, Lógica de Transferência, Atualização Atômica de Saldos, Testes)
 * [x] **Etapa 5 — Dashboards, Gráficos e Relatórios** (Métricas consolidadas, Fluxo de Caixa Recharts, Rosca de Despesas, Relatório Analítico, Exportação CSV e PDF)
 * [x] **Etapa 6 — Configurações, Perfil, RBAC e Auditoria** (Perfil do Usuário, Segurança, Preferências, Notificações com Alertas Inteligentes, Painel Administrativo de Usuários e Logs de Auditoria)
-* [ ] **Etapa 7 — Qualidade Global, Revisão de Segurança e Responsividade Multidispositivo** (Pendente de início)
+* [x] **Etapa 7 — Qualidade Global, Revisão de Segurança, Performance e Responsividade Multidispositivo** (Cabeçalhos OWASP, Eager loading rigoroso sem N+1, Rate limiting reforçado, ErrorBoundary, Code splitting React.lazy, 100% testes e tipagem estrita)
 
 ## 4. Comandos de Validação e Qualidade
 * **Backend Pint:** `cd backend && .\vendor\bin\pint`
