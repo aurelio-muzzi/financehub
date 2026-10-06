@@ -58,7 +58,8 @@ financehub/
 * [x] **Etapa 2 — Autenticação e RBAC** (Sanctum SPA, AuthController, UserPolicy, AuthProvider, Route Guards, LoginPage)
 * [x] **Etapa 3 — Contas e Categorias** (CRUD, API Resources, Políticas, Frontend React, TanStack Query, Testes)
 * [x] **Etapa 4 — Transações, Extrato e Relacionamentos** (CRUD, Lógica de Transferência, Atualização Atômica de Saldos, Testes)
-* [ ] **Etapa 5 — Dashboards, Gráficos e Relatórios** (Em andamento)
+* [x] **Etapa 5 — Dashboards, Gráficos e Relatórios** (Métricas consolidadas, Fluxo de Caixa Recharts, Rosca de Despesas, Relatório Analítico, Exportação CSV e PDF)
+* [ ] **Etapa 6 — Configurações, Perfil, RBAC e Auditoria** (Pendente de início)
 
 ## 4. Comandos de Validação e Qualidade
 * **Backend Pint:** `cd backend && .\vendor\bin\pint`
