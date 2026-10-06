@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -16,5 +18,15 @@ Route::prefix('v1')->group(function () {
             Route::get('me', [AuthController::class, 'me']);
             Route::put('password', [AuthController::class, 'updatePassword']);
         });
+    });
+
+    // Recursos autenticados da aplicação
+    Route::middleware('auth:sanctum')->group(function () {
+        // Categorias
+        Route::apiResource('categories', CategoryController::class);
+
+        // Contas Financeiras
+        Route::get('accounts/{account}/balance', [AccountController::class, 'balance']);
+        Route::apiResource('accounts', AccountController::class);
     });
 });
