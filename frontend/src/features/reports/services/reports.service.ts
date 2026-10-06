@@ -5,14 +5,14 @@ export const reportsService = {
   async getAnalytics(startDate: string, endDate: string): Promise<AnalyticsReport> {
     const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
     const response = await apiClient.get<{ data: AnalyticsReport }>(
-      `/v1/reports/analytics?${params.toString()}`
+      `/api/v1/reports/analytics?${params.toString()}`
     );
     return response.data.data;
   },
 
   async downloadCsv(startDate: string, endDate: string): Promise<void> {
     const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
-    const response = await apiClient.get(`/v1/reports/export/csv?${params.toString()}`, {
+    const response = await apiClient.get(`/api/v1/reports/export/csv?${params.toString()}`, {
       responseType: 'blob',
     });
 
@@ -29,7 +29,7 @@ export const reportsService = {
 
   async downloadPdf(startDate: string, endDate: string): Promise<void> {
     const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
-    const response = await apiClient.get(`/v1/reports/export/pdf?${params.toString()}`, {
+    const response = await apiClient.get(`/api/v1/reports/export/pdf?${params.toString()}`, {
       responseType: 'blob',
     });
 

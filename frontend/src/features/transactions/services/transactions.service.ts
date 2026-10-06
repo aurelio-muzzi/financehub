@@ -27,7 +27,7 @@ export const transactionsService = {
     const response = await apiClient.get<{
       data: Transaction[];
       meta?: { current_page: number; last_page: number; total: number };
-    }>(`/v1/transactions?${params.toString()}`);
+    }>(`/api/v1/transactions?${params.toString()}`);
     return response.data;
   },
 
@@ -42,27 +42,27 @@ export const transactionsService = {
     if (filters?.end_date) params.append('end_date', filters.end_date);
 
     const response = await apiClient.get<{ data: TransactionSummary }>(
-      `/v1/transactions/summary?${params.toString()}`
+      `/api/v1/transactions/summary?${params.toString()}`
     );
     return response.data.data;
   },
 
   async getTransactionById(id: number): Promise<Transaction> {
-    const response = await apiClient.get<{ data: Transaction }>(`/v1/transactions/${id}`);
+    const response = await apiClient.get<{ data: Transaction }>(`/api/v1/transactions/${id}`);
     return response.data.data;
   },
 
   async createTransaction(payload: CreateTransactionPayload): Promise<Transaction> {
-    const response = await apiClient.post<{ data: Transaction }>('/v1/transactions', payload);
+    const response = await apiClient.post<{ data: Transaction }>('/api/v1/transactions', payload);
     return response.data.data;
   },
 
   async updateTransaction(id: number, payload: UpdateTransactionPayload): Promise<Transaction> {
-    const response = await apiClient.put<{ data: Transaction }>(`/v1/transactions/${id}`, payload);
+    const response = await apiClient.put<{ data: Transaction }>(`/api/v1/transactions/${id}`, payload);
     return response.data.data;
   },
 
   async deleteTransaction(id: number): Promise<void> {
-    await apiClient.delete(`/v1/transactions/${id}`);
+    await apiClient.delete(`/api/v1/transactions/${id}`);
   },
 };

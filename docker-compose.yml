@@ -40,8 +40,11 @@ services:
       DB_USERNAME: ${DB_USERNAME:-financehub}
       DB_PASSWORD: ${DB_PASSWORD:-financehub_secret}
       SESSION_DOMAIN: localhost
-      SANCTUM_STATEFUL_DOMAINS: "localhost:5173,localhost:80,localhost:8000"
+      SANCTUM_STATEFUL_DOMAINS: "localhost:5173,localhost:80,localhost:8000,localhost"
       FRONTEND_URL: "http://localhost:5173"
+      PHP_CLI_SERVER_WORKERS: 4
+    ports:
+      - "8000:8000"
     volumes:
       - ./backend:/var/www/html
     networks:
@@ -53,6 +56,8 @@ services:
       dockerfile: Dockerfile
     container_name: financehub-frontend
     restart: unless-stopped
+    ports:
+      - "5173:5173"
     environment:
       VITE_API_URL: "http://localhost:8000"
     volumes:
