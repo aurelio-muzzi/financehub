@@ -11,3 +11,5 @@ parameters:
 
     # Level 6 strict analysis
     level: 6
+
+    treatPhpDocTypesAsCertain: false

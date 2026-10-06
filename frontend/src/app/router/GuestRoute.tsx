@@ -1,0 +1,22 @@
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { LoadingState } from '@/components/feedback/LoadingState';
+
+export const GuestRoute: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: 'var(--spacing-2xl)', maxWidth: '400px', margin: '0 auto' }}>
+        <LoadingState lines={2} />
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Outlet />;
+};
