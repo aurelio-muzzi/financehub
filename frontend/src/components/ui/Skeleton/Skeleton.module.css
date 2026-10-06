@@ -1,0 +1,5 @@
+.skeleton {
+  background-color: var(--bg-muted);
+  border-radius: var(--radius-sm);
+  display: block;
+}

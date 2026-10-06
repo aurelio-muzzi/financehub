@@ -1,0 +1,83 @@
+services:
+  financehub-db:
+    image: postgres:16-alpine
+    container_name: financehub-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-financehub}
+      POSTGRES_USER: ${DB_USERNAME:-financehub}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-financehub_secret}
+    ports:
+      - "${DB_PORT_FORWARD:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - financehub-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-financehub} -d ${DB_DATABASE:-financehub}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  financehub-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: financehub-backend
+    restart: unless-stopped
+    depends_on:
+      financehub-db:
+        condition: service_healthy
+    environment:
+      APP_NAME: "FinanceHub"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: "http://localhost:8000"
+      DB_CONNECTION: pgsql
+      DB_HOST: financehub-db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-financehub}
+      DB_USERNAME: ${DB_USERNAME:-financehub}
+      DB_PASSWORD: ${DB_PASSWORD:-financehub_secret}
+      SESSION_DOMAIN: localhost
+      SANCTUM_STATEFUL_DOMAINS: "localhost:5173,localhost:80,localhost:8000"
+      FRONTEND_URL: "http://localhost:5173"
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - financehub-network
+
+  financehub-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: financehub-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - financehub-network
+
+  financehub-nginx:
+    image: nginx:1.25-alpine
+    container_name: financehub-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - financehub-backend
+      - financehub-frontend
+    networks:
+      - financehub-network
+
+networks:
+  financehub-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

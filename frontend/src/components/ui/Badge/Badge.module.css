@@ -1,0 +1,34 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.success {
+  background-color: var(--income-bg);
+  color: var(--income-text);
+  border: 1px solid var(--income-border);
+}
+
+.danger {
+  background-color: var(--expense-bg);
+  color: var(--expense-text);
+  border: 1px solid var(--expense-border);
+}
+
+.warning {
+  background-color: var(--pending-bg);
+  color: var(--pending-text);
+  border: 1px solid var(--pending-border);
+}
+
+.neutral {
+  background-color: var(--bg-muted);
+  color: var(--text-muted);
+}

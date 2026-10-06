@@ -1,0 +1,24 @@
+# Environment files
+.env
+.env.backup
+.env.production
+
+# Dependencies
+backend/vendor/
+frontend/node_modules/
+
+# Builds & Caches
+frontend/dist/
+backend/storage/*.key
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+
+# IDE & System
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

@@ -1,0 +1,46 @@
+.header {
+  height: 64px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-md);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary-700);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.menuButton {
+  min-height: var(--min-touch-size);
+  min-width: var(--min-touch-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+}
+
+@media (min-width: 1024px) {
+  .menuButton {
+    display: none;
+  }
+}
