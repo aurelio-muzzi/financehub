@@ -1,7 +1,8 @@
 import React from 'react';
-import { Menu, Bell, User as UserIcon, LogOut } from 'lucide-react';
+import { Menu, User as UserIcon, LogOut } from 'lucide-react';
 import { useUiStore } from '@/stores/useUiStore';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import styles from './Header.module.css';
 
 export const Header: React.FC = () => {
@@ -31,21 +32,7 @@ export const Header: React.FC = () => {
       </div>
 
       <div className={styles.rightSection}>
-        <button
-          type="button"
-          style={{
-            minWidth: '40px',
-            minHeight: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--text-muted)',
-            borderRadius: 'var(--radius-full)',
-          }}
-          aria-label="Notificações"
-        >
-          <Bell size={20} />
-        </button>
+        <NotificationBell />
 
         <div
           style={{

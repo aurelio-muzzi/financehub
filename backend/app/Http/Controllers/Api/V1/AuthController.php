@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\AuditService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,6 +115,16 @@ class AuthController extends Controller
         $user->update([
             'password' => Hash::make($request->validated('password')),
         ]);
+
+        AuditService::log(
+            action: 'PASSWORD_CHANGE',
+            entityType: 'User',
+            entityId: $user->id,
+            oldValues: null,
+            newValues: null,
+            userId: $user->id,
+            request: $request
+        );
 
         return response()->json([
             'success' => true,

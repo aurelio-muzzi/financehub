@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AccountController;
+use App\Http\Controllers\Api\V1\AdminAuditLogController;
+use App\Http\Controllers\Api\V1\AdminUserController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +53,28 @@ Route::prefix('v1')->group(function () {
             Route::get('analytics', [ReportController::class, 'analytics']);
             Route::get('export/csv', [ReportController::class, 'exportCsv']);
             Route::get('export/pdf', [ReportController::class, 'exportPdf']);
+        });
+
+        // Perfil e Preferências
+        Route::prefix('profile')->group(function () {
+            Route::get('/', [ProfileController::class, 'show']);
+            Route::put('/', [ProfileController::class, 'update']);
+            Route::put('/preferences', [ProfileController::class, 'updatePreferences']);
+        });
+
+        // Notificações e Alertas Inteligentes
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::post('{id}/read', [NotificationController::class, 'markAsRead']);
+            Route::post('mark-all-read', [NotificationController::class, 'markAllAsRead']);
+        });
+
+        // Área Administrativa (RBAC e Auditoria)
+        Route::prefix('admin')->middleware('admin')->group(function () {
+            Route::get('users', [AdminUserController::class, 'index']);
+            Route::put('users/{user}', [AdminUserController::class, 'update']);
+            Route::get('roles', [AdminUserController::class, 'roles']);
+            Route::get('audit-logs', [AdminAuditLogController::class, 'index']);
         });
     });
 });

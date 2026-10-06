@@ -8,6 +8,7 @@ import {
   BarChart3,
   Settings,
   ShieldCheck,
+  History,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -24,8 +25,9 @@ const navItems: NavItemConfig[] = [
   { label: 'Contas', to: '/accounts', icon: <Wallet size={18} /> },
   { label: 'Categorias', to: '/categories', icon: <Tag size={18} /> },
   { label: 'Relatórios', to: '/reports', icon: <BarChart3 size={18} /> },
-  { label: 'Configurações', to: '/settings/profile', icon: <Settings size={18} /> },
-  { label: 'Admin', to: '/admin/users', icon: <ShieldCheck size={18} />, isAdmin: true },
+  { label: 'Configurações', to: '/settings', icon: <Settings size={18} /> },
+  { label: 'Usuários (RBAC)', to: '/admin/users', icon: <ShieldCheck size={18} />, isAdmin: true },
+  { label: 'Auditoria', to: '/admin/audit-logs', icon: <History size={18} />, isAdmin: true },
 ];
 
 export interface SidebarProps {

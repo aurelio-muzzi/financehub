@@ -27,6 +27,20 @@ class TransactionService
                 $this->applyBalanceEffect($transaction);
             }
 
+            AuditService::log(
+                action: $transaction->type === 'TRANSFER' ? 'TRANSFER_CREATE' : 'TRANSACTION_CREATE',
+                entityType: 'Transaction',
+                entityId: $transaction->id,
+                oldValues: null,
+                newValues: [
+                    'type' => $transaction->type,
+                    'amount' => $transaction->amount,
+                    'description' => $transaction->description,
+                    'status' => $transaction->status,
+                ],
+                userId: $user->id
+            );
+
             return $transaction;
         });
     }
@@ -39,6 +53,13 @@ class TransactionService
     public function update(Transaction $transaction, array $data): Transaction
     {
         return DB::transaction(function () use ($transaction, $data) {
+            $oldValues = [
+                'type' => $transaction->type,
+                'amount' => $transaction->amount,
+                'description' => $transaction->description,
+                'status' => $transaction->status,
+            ];
+
             // Reverter efeito anterior se estava completada
             if ($transaction->status === 'COMPLETED') {
                 $this->revertBalanceEffect($transaction);
@@ -52,6 +73,20 @@ class TransactionService
                 $this->applyBalanceEffect($transaction);
             }
 
+            AuditService::log(
+                action: 'TRANSACTION_UPDATE',
+                entityType: 'Transaction',
+                entityId: $transaction->id,
+                oldValues: $oldValues,
+                newValues: [
+                    'type' => $transaction->type,
+                    'amount' => $transaction->amount,
+                    'description' => $transaction->description,
+                    'status' => $transaction->status,
+                ],
+                userId: $transaction->user_id
+            );
+
             return $transaction;
         });
     }
@@ -62,11 +97,29 @@ class TransactionService
     public function delete(Transaction $transaction): bool
     {
         return DB::transaction(function () use ($transaction) {
+            $oldValues = [
+                'type' => $transaction->type,
+                'amount' => $transaction->amount,
+                'description' => $transaction->description,
+                'status' => $transaction->status,
+            ];
+
             if ($transaction->status === 'COMPLETED') {
                 $this->revertBalanceEffect($transaction);
             }
 
-            return (bool) $transaction->delete();
+            $deleted = (bool) $transaction->delete();
+
+            AuditService::log(
+                action: 'TRANSACTION_DELETE',
+                entityType: 'Transaction',
+                entityId: $transaction->id,
+                oldValues: $oldValues,
+                newValues: null,
+                userId: $transaction->user_id
+            );
+
+            return $deleted;
         });
     }
 

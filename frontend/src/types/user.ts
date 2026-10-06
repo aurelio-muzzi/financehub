@@ -13,9 +13,12 @@ export interface Permission {
 }
 
 export interface UserPreferences {
-  currency: 'BRL' | 'USD' | 'EUR';
-  date_format: string;
-  timezone: string;
+  currency?: 'BRL' | 'USD' | 'EUR';
+  date_format?: string;
+  timezone?: string;
+  theme?: 'light' | 'dark' | 'system';
+  notify_overdue?: boolean;
+  notify_due_soon?: boolean;
 }
 
 export interface User {

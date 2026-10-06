@@ -4,13 +4,17 @@ import { Header } from '@/components/navigation/Header';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
 
+import { useAuth } from '@/features/auth/hooks/useAuth';
+
 export const AppLayout: React.FC = () => {
+  const { isAdmin } = useAuth();
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
-      <MobileNav />
+      <MobileNav isAdmin={isAdmin} />
       <div style={{ display: 'flex', flex: 1 }}>
-        <Sidebar />
+        <Sidebar isAdmin={isAdmin} />
         <main
           style={{
             flex: 1,
