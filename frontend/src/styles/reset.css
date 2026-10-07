@@ -29,6 +29,30 @@ body {
   background-color: var(--bg-app);
   color: var(--text-main);
   overflow-x: hidden;
+  transition:
+    background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transição suave de tema para superfícies e componentes */
+header,
+nav,
+aside,
+main,
+section,
+dialog,
+input,
+select,
+textarea,
+table,
+tr,
+th,
+td {
+  transition:
+    background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input,

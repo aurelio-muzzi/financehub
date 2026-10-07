@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, User as UserIcon, LogOut } from 'lucide-react';
+import { Menu, User as UserIcon, LogOut, Sun, Moon } from 'lucide-react';
 import { useUiStore } from '@/stores/useUiStore';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
@@ -7,6 +7,8 @@ import styles from './Header.module.css';
 
 export const Header: React.FC = () => {
   const toggleMobileMenu = useUiStore(state => state.toggleMobileMenu);
+  const theme = useUiStore(state => state.theme);
+  const toggleTheme = useUiStore(state => state.toggleTheme);
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -32,6 +34,28 @@ export const Header: React.FC = () => {
       </div>
 
       <div className={styles.rightSection}>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          style={{
+            minWidth: '36px',
+            minHeight: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: theme === 'dark' ? '#fbbf24' : 'var(--text-muted)',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: theme === 'dark' ? 'rgba(251, 191, 36, 0.1)' : 'transparent',
+            transition: 'all var(--transition-fast)',
+            border: '1px solid transparent',
+            cursor: 'pointer',
+          }}
+          aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
+          title={theme === 'dark' ? 'Alternar para Modo Claro' : 'Alternar para Modo Escuro'}
+        >
+          {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+        </button>
+
         <NotificationBell />
 
         <div
