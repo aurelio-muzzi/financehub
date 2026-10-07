@@ -6,6 +6,8 @@ import type {
   UpdateCategoryPayload,
 } from '../types/category.types';
 
+const EMPTY_CATEGORIES: never[] = [];
+
 export function useCategories(filters?: CategoryFilters) {
   const queryClient = useQueryClient();
 
@@ -17,7 +19,7 @@ export function useCategories(filters?: CategoryFilters) {
   const createMutation = useMutation({
     mutationFn: (payload: CreateCategoryPayload) => categoriesService.createCategory(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      void queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 
@@ -25,20 +27,20 @@ export function useCategories(filters?: CategoryFilters) {
     mutationFn: ({ id, payload }: { id: number; payload: UpdateCategoryPayload }) =>
       categoriesService.updateCategory(id, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      void queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => categoriesService.deleteCategory(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      void queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
   });
 
   return {
     ...query,
-    categories: query.data ?? [],
+    categories: query.data ?? EMPTY_CATEGORIES,
     createCategory: createMutation.mutateAsync,
     isCreating: createMutation.isPending,
     updateCategory: updateMutation.mutateAsync,

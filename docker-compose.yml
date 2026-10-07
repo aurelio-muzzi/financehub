@@ -39,10 +39,11 @@ services:
       DB_DATABASE: ${DB_DATABASE:-financehub}
       DB_USERNAME: ${DB_USERNAME:-financehub}
       DB_PASSWORD: ${DB_PASSWORD:-financehub_secret}
-      SESSION_DOMAIN: localhost
+      SESSION_DOMAIN: ""
       SANCTUM_STATEFUL_DOMAINS: "localhost:5173,localhost:80,localhost:8000,localhost"
       FRONTEND_URL: "http://localhost:5173"
       PHP_CLI_SERVER_WORKERS: 4
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000", "--no-reload"]
     ports:
       - "8000:8000"
     volumes:

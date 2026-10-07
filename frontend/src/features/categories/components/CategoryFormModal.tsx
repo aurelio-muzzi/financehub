@@ -57,6 +57,8 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
   const selectedType = useWatch({ control, name: 'type' });
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (categoryToEdit) {
       reset({
         name: categoryToEdit.name,
@@ -74,7 +76,7 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
         is_active: true,
       });
     }
-  }, [categoryToEdit, defaultType, reset]);
+  }, [isOpen, categoryToEdit, defaultType, reset]);
 
   if (!isOpen) return null;
 
@@ -96,13 +98,20 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
       }}
     >
       {/* Backdrop */}
-      <div
+      <button
+        type="button"
+        aria-label="Fechar modal"
+        tabIndex={-1}
+        onClick={onClose}
         style={{
           position: 'absolute',
           inset: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.45)',
+          border: 'none',
+          padding: 0,
+          margin: 0,
+          cursor: 'default',
         }}
-        onClick={onClose}
       />
 
       {/* Modal Content */}

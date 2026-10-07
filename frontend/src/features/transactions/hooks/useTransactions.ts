@@ -6,6 +6,8 @@ import type {
   UpdateTransactionPayload,
 } from '../types/transaction.types';
 
+const EMPTY_TRANSACTIONS: never[] = [];
+
 export function useTransactions(filters?: TransactionFilters) {
   const queryClient = useQueryClient();
 
@@ -35,9 +37,9 @@ export function useTransactions(filters?: TransactionFilters) {
     mutationFn: (payload: CreateTransactionPayload) =>
       transactionsService.createTransaction(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
@@ -45,30 +47,30 @@ export function useTransactions(filters?: TransactionFilters) {
     mutationFn: ({ id, payload }: { id: number; payload: UpdateTransactionPayload }) =>
       transactionsService.updateTransaction(id, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => transactionsService.deleteTransaction(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
   return {
-    transactions: transactionsQuery.data?.data ?? [],
+    transactions: transactionsQuery.data?.data ?? EMPTY_TRANSACTIONS,
     pagination: transactionsQuery.data?.meta,
     summary: summaryQuery.data,
     isLoading: transactionsQuery.isLoading || summaryQuery.isLoading,
     isError: transactionsQuery.isError || summaryQuery.isError,
     refetch: () => {
-      transactionsQuery.refetch();
-      summaryQuery.refetch();
+      void transactionsQuery.refetch();
+      void summaryQuery.refetch();
     },
     createTransaction: createMutation.mutateAsync,
     updateTransaction: updateMutation.mutateAsync,

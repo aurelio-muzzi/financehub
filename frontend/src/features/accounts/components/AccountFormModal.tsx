@@ -61,11 +61,13 @@ export const AccountFormModal: React.FC<AccountFormModalProps> = ({
   const selectedColor = useWatch({ control, name: 'color' });
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (accountToEdit) {
       reset({
         name: accountToEdit.name,
         type: accountToEdit.type,
-        initial_balance: parseFloat(accountToEdit.initial_balance) || 0,
+        initial_balance: Number.parseFloat(accountToEdit.initial_balance) || 0,
         color: accountToEdit.color || PRESET_COLORS[0],
         icon: accountToEdit.icon || 'Landmark',
         is_active: accountToEdit.is_active,
@@ -80,7 +82,7 @@ export const AccountFormModal: React.FC<AccountFormModalProps> = ({
         is_active: true,
       });
     }
-  }, [accountToEdit, reset]);
+  }, [isOpen, accountToEdit, reset]);
 
   if (!isOpen) return null;
 
@@ -101,13 +103,20 @@ export const AccountFormModal: React.FC<AccountFormModalProps> = ({
         padding: 'var(--spacing-md)',
       }}
     >
-      <div
+      <button
+        type="button"
+        aria-label="Fechar modal"
+        tabIndex={-1}
+        onClick={onClose}
         style={{
           position: 'absolute',
           inset: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.45)',
+          border: 'none',
+          padding: 0,
+          margin: 0,
+          cursor: 'default',
         }}
-        onClick={onClose}
       />
 
       <div
