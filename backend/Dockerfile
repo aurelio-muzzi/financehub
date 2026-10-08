@@ -19,6 +19,9 @@ RUN apk update && apk add --no-cache \
 # Obter Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Configuração otimizada de OPcache
+COPY opcache.ini /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+
 WORKDIR /var/www/html
 
 # Copiar código da aplicação

@@ -8,12 +8,17 @@ import type {
 
 const EMPTY_TRANSACTIONS: never[] = [];
 
-export function useTransactions(filters?: TransactionFilters) {
+export function useTransactions(
+  filters?: TransactionFilters,
+  options?: { enabled?: boolean }
+) {
   const queryClient = useQueryClient();
+  const isEnabled = options?.enabled ?? true;
 
   const transactionsQuery = useQuery({
     queryKey: ['transactions', filters],
     queryFn: () => transactionsService.getTransactions(filters),
+    enabled: isEnabled,
   });
 
   const summaryQuery = useQuery({
@@ -31,6 +36,7 @@ export function useTransactions(filters?: TransactionFilters) {
         start_date: filters?.start_date,
         end_date: filters?.end_date,
       }),
+    enabled: isEnabled,
   });
 
   const createMutation = useMutation({

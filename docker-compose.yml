@@ -48,6 +48,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+      - ./backend/opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini:ro
     networks:
       - financehub-network
 
@@ -87,3 +89,4 @@ networks:
 
 volumes:
   postgres_data:
+  backend_vendor:

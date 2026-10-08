@@ -770,12 +770,14 @@ export const TransactionsPage: React.FC = () => {
       )}
 
       {/* Modal de Criação / Edição */}
-      <TransactionFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        transactionToEdit={transactionToEdit}
-      />
+      {isModalOpen && (
+        <TransactionFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleModalSubmit}
+          transactionToEdit={transactionToEdit}
+        />
+      )}
     </div>
   );
 };

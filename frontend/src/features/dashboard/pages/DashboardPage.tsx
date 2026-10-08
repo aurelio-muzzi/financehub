@@ -30,7 +30,7 @@ import type { TransactionSchemaType } from '@/features/transactions/schemas/tran
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { accounts } = useAccounts();
-  const { createTransaction } = useTransactions();
+  const { createTransaction } = useTransactions(undefined, { enabled: false });
   const { metrics, cashFlow, expensesByCategory, recentTransactions, isLoading, isError, refetch } =
     useDashboard();
 
@@ -358,12 +358,14 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Modal de Transação Rápida */}
-      <TransactionFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        defaultType={modalType}
-      />
+      {isModalOpen && (
+        <TransactionFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleModalSubmit}
+          defaultType={modalType}
+        />
+      )}
     </div>
   );
 };
