@@ -27,12 +27,10 @@ WORKDIR /var/www/html
 # Copiar código da aplicação
 COPY . .
 
-# Copiar e configurar script de entrypoint
+# Copiar e configurar script de entrypoint e permissões de armazenamento do Laravel
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Permissões de armazenamento do Laravel
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8000
