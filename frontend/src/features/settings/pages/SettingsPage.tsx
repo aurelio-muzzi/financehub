@@ -13,6 +13,7 @@ import {
   type UpdatePasswordSchemaType,
 } from '@/features/auth/schemas/auth.schema';
 import { handleAxiosError } from '@/lib/api/errors';
+import { useUiStore } from '@/stores/useUiStore';
 import type { PreferencesPayload } from '../types/settings.types';
 
 const profileSchema = z.object({
@@ -33,17 +34,20 @@ const PreferencesTab: React.FC<PreferencesTabProps> = ({
   onSave,
   isSaving,
 }) => {
-  const [preferences, setPreferences] = useState<PreferencesPayload>({
-    theme: 'light',
-    currency: 'BRL',
-    date_format: 'dd/MM/yyyy',
-    notify_overdue: true,
-    notify_due_soon: true,
-    ...(initialPreferences || {}),
-  });
+  const { theme: currentTheme, setTheme } = useUiStore();
+  const [preferences, setPreferences] = useState<PreferencesPayload>(() => ({
+    theme: (initialPreferences?.theme as 'light' | 'dark') || currentTheme,
+    currency: initialPreferences?.currency || 'BRL',
+    date_format: initialPreferences?.date_format || 'dd/MM/yyyy',
+    notify_overdue: initialPreferences?.notify_overdue ?? true,
+    notify_due_soon: initialPreferences?.notify_due_soon ?? true,
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (preferences.theme === 'light' || preferences.theme === 'dark') {
+      setTheme(preferences.theme);
+    }
     void onSave(preferences);
   };
 
@@ -61,6 +65,34 @@ const PreferencesTab: React.FC<PreferencesTabProps> = ({
           marginTop: 'var(--spacing-md)',
         }}
       >
+        {/* Tema da Interface */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>
+            Tema da Interface
+          </label>
+          <select
+            value={preferences.theme || currentTheme}
+            onChange={e => {
+              const newTheme = e.target.value as 'light' | 'dark';
+              setPreferences(prev => ({
+                ...prev,
+                theme: newTheme,
+              }));
+              setTheme(newTheme);
+            }}
+            style={{
+              padding: '10px 12px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              backgroundColor: 'var(--bg-surface)',
+              color: 'var(--text-main)',
+              fontSize: '0.875rem',
+            }}
+          >
+            <option value="light">Modo Claro (Clássico)</option>
+            <option value="dark">Modo Escuro (Dark Mode)</option>
+          </select>
+        </div>
         {/* Moeda Padrão */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>

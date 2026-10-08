@@ -27,6 +27,8 @@ const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'OTHER', label: 'Outro' },
 ];
 
+const ACTIVE_FILTER = { is_active: true };
+
 export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   isOpen,
   onClose,
@@ -34,10 +36,10 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   transactionToEdit,
   defaultType = 'EXPENSE',
 }) => {
-  const { accounts } = useAccounts({ is_active: true });
-  const { categories } = useCategories({ is_active: true });
+  const { accounts } = useAccounts(ACTIVE_FILTER);
+  const { categories } = useCategories(ACTIVE_FILTER);
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const defaultAccountId = accounts[0]?.id ?? 1;
 
   const {
     register,
@@ -50,11 +52,11 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
       type: defaultType,
-      account_id: accounts[0]?.id ?? 1,
+      account_id: defaultAccountId,
       category_id: null,
       destination_account_id: null,
       amount: 0,
-      date: todayStr,
+      date: new Date().toISOString().split('T')[0],
       description: '',
       notes: '',
       payment_method: 'PIX',
@@ -67,13 +69,17 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   const selectedAccountId = useWatch({ control, name: 'account_id' });
 
   useEffect(() => {
+    if (!isOpen) return;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+
     if (transactionToEdit) {
       reset({
         type: transactionToEdit.type,
         account_id: transactionToEdit.account_id,
         category_id: transactionToEdit.category_id,
         destination_account_id: transactionToEdit.destination_account_id,
-        amount: parseFloat(transactionToEdit.amount) || 0,
+        amount: Number.parseFloat(transactionToEdit.amount) || 0,
         date: transactionToEdit.date,
         description: transactionToEdit.description,
         notes: transactionToEdit.notes || '',
@@ -84,7 +90,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
     } else {
       reset({
         type: defaultType,
-        account_id: accounts[0]?.id ?? 1,
+        account_id: defaultAccountId,
         category_id: null,
         destination_account_id: null,
         amount: 0,
@@ -96,7 +102,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
         is_recurring: false,
       });
     }
-  }, [transactionToEdit, defaultType, accounts, reset, todayStr]);
+  }, [isOpen, transactionToEdit, defaultType, defaultAccountId, reset]);
 
   if (!isOpen) return null;
 
@@ -125,13 +131,20 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
         padding: 'var(--spacing-md)',
       }}
     >
-      <div
+      <button
+        type="button"
+        aria-label="Fechar modal"
+        tabIndex={-1}
+        onClick={onClose}
         style={{
           position: 'absolute',
           inset: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          border: 'none',
+          padding: 0,
+          margin: 0,
+          cursor: 'default',
         }}
-        onClick={onClose}
       />
 
       <div

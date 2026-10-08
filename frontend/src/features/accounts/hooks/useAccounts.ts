@@ -6,6 +6,8 @@ import type {
   UpdateAccountPayload,
 } from '../types/account.types';
 
+const EMPTY_ACCOUNTS: never[] = [];
+
 export function useAccounts(filters?: AccountFilters) {
   const queryClient = useQueryClient();
 
@@ -17,7 +19,7 @@ export function useAccounts(filters?: AccountFilters) {
   const createMutation = useMutation({
     mutationFn: (payload: CreateAccountPayload) => accountsService.createAccount(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
@@ -25,20 +27,20 @@ export function useAccounts(filters?: AccountFilters) {
     mutationFn: ({ id, payload }: { id: number; payload: UpdateAccountPayload }) =>
       accountsService.updateAccount(id, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => accountsService.deleteAccount(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
   return {
     ...query,
-    accounts: query.data ?? [],
+    accounts: query.data ?? EMPTY_ACCOUNTS,
     createAccount: createMutation.mutateAsync,
     isCreating: createMutation.isPending,
     updateAccount: updateMutation.mutateAsync,

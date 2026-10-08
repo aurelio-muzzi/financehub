@@ -26,6 +26,207 @@ import { TransactionFormModal } from '../components/TransactionFormModal';
 import type { Transaction, TransactionType, TransactionStatus } from '../types/transaction.types';
 import type { TransactionSchemaType } from '../schemas/transaction.schema';
 
+function getTransactionTypeStyles(type: TransactionType) {
+  if (type === 'INCOME') {
+    return {
+      bgColor: 'rgba(16, 185, 129, 0.15)',
+      color: 'var(--income-text)',
+      amountColor: 'var(--income-text)',
+      prefix: '+ ',
+    };
+  }
+  if (type === 'EXPENSE') {
+    return {
+      bgColor: 'rgba(239, 68, 68, 0.15)',
+      color: 'var(--expense-text)',
+      amountColor: 'var(--expense-text)',
+      prefix: '- ',
+    };
+  }
+  return {
+    bgColor: 'rgba(59, 130, 246, 0.15)',
+    color: 'var(--primary-600)',
+    amountColor: 'var(--primary-600)',
+    prefix: '',
+  };
+}
+
+function renderStatusBadge(status: TransactionStatus) {
+  if (status === 'COMPLETED') {
+    return <Badge variant="success">Efetivada</Badge>;
+  }
+  if (status === 'PENDING') {
+    return <Badge variant="warning">Pendente</Badge>;
+  }
+  return <Badge variant="danger">Cancelada</Badge>;
+}
+
+function renderCategoryBadge(tx: Transaction) {
+  if (tx.type === 'TRANSFER') {
+    return <Badge variant="neutral">Transferência</Badge>;
+  }
+  if (tx.category) {
+    const bgColor = tx.category.color ? `${tx.category.color}20` : 'var(--bg-muted)';
+    const textColor = tx.category.color || 'var(--text-main)';
+    return (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '2px 8px',
+          borderRadius: 'var(--radius-full)',
+          fontSize: '0.75rem',
+          fontWeight: 500,
+          backgroundColor: bgColor,
+          color: textColor,
+        }}
+      >
+        {tx.category.name}
+      </span>
+    );
+  }
+  return <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Geral</span>;
+}
+
+interface TransactionRowProps {
+  tx: Transaction;
+  onEdit: (tx: Transaction) => void;
+  onDelete: (id: number) => void;
+}
+
+const TransactionRow: React.FC<TransactionRowProps> = ({ tx, onEdit, onDelete }) => {
+  const isIncome = tx.type === 'INCOME';
+  const isExpense = tx.type === 'EXPENSE';
+  const isTransfer = tx.type === 'TRANSFER';
+  const amountNum = Number.parseFloat(tx.amount) || 0;
+  const styles = getTransactionTypeStyles(tx.type);
+
+  return (
+    <tr
+      style={{
+        borderBottom: '1px solid var(--border-light)',
+        transition: 'background-color var(--transition-fast)',
+      }}
+    >
+      <td
+        style={{
+          padding: '12px 16px',
+          color: 'var(--text-muted)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Calendar size={14} />
+          {formatDate(tx.date)}
+        </div>
+      </td>
+
+      <td style={{ padding: '12px 16px', color: 'var(--text-main)', fontWeight: 500 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              backgroundColor: styles.bgColor,
+              color: styles.color,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            {isIncome && <ArrowDownLeft size={16} />}
+            {isExpense && <ArrowUpRight size={16} />}
+            {isTransfer && <ArrowLeftRight size={16} />}
+          </div>
+          <div>
+            <div>{tx.description}</div>
+            {tx.payment_method && (
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                {tx.payment_method}
+              </span>
+            )}
+          </div>
+        </div>
+      </td>
+
+      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+        {renderCategoryBadge(tx)}
+      </td>
+
+      <td
+        style={{
+          padding: '12px 16px',
+          color: 'var(--text-muted)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {isTransfer ? (
+          <span>
+            {tx.account?.name} → {tx.destination_account?.name}
+          </span>
+        ) : (
+          <span>{tx.account?.name || 'Conta Padrão'}</span>
+        )}
+      </td>
+
+      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+        {renderStatusBadge(tx.status)}
+      </td>
+
+      <td
+        style={{
+          padding: '12px 16px',
+          textAlign: 'right',
+          fontWeight: 700,
+          whiteSpace: 'nowrap',
+          color: styles.amountColor,
+        }}
+      >
+        {styles.prefix}
+        {formatCurrency(amountNum)}
+      </td>
+
+      <td style={{ padding: '12px 16px', textAlign: 'center', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', gap: 'var(--spacing-xs)' }}>
+          <button
+            type="button"
+            onClick={() => onEdit(tx)}
+            style={{
+              padding: '6px',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--text-muted)',
+              cursor: 'pointer',
+              display: 'flex',
+            }}
+            title="Editar movimentação"
+            aria-label="Editar movimentação"
+          >
+            <Edit2 size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete(tx.id)}
+            style={{
+              padding: '6px',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--expense-text)',
+              cursor: 'pointer',
+              display: 'flex',
+            }}
+            title="Excluir movimentação"
+            aria-label="Excluir movimentação"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+};
+
 export const TransactionsPage: React.FC = () => {
   // Datas padrão: Início do mês atual até o dia de hoje
   const now = new Date();
@@ -201,7 +402,7 @@ export const TransactionsPage: React.FC = () => {
                   marginTop: '4px',
                 }}
               >
-                {formatCurrency(parseFloat(summary?.total_income || '0'))}
+                {formatCurrency(Number.parseFloat(summary?.total_income || '0'))}
               </div>
             </div>
             <div
@@ -235,7 +436,7 @@ export const TransactionsPage: React.FC = () => {
                   marginTop: '4px',
                 }}
               >
-                {formatCurrency(parseFloat(summary?.total_expense || '0'))}
+                {formatCurrency(Number.parseFloat(summary?.total_expense || '0'))}
               </div>
             </div>
             <div
@@ -266,13 +467,13 @@ export const TransactionsPage: React.FC = () => {
                   fontSize: '1.5rem',
                   fontWeight: 700,
                   color:
-                    parseFloat(summary?.net_balance || '0') >= 0
+                    Number.parseFloat(summary?.net_balance || '0') >= 0
                       ? 'var(--income-text)'
                       : 'var(--expense-text)',
                   marginTop: '4px',
                 }}
               >
-                {formatCurrency(parseFloat(summary?.net_balance || '0'))}
+                {formatCurrency(Number.parseFloat(summary?.net_balance || '0'))}
               </div>
             </div>
             <Badge variant="neutral" style={{ fontSize: '0.75rem' }}>
@@ -378,7 +579,7 @@ export const TransactionsPage: React.FC = () => {
             <select
               value={selectedAccountId}
               onChange={e => {
-                const val = e.target.value === 'ALL' ? 'ALL' : parseInt(e.target.value, 10);
+                const val = e.target.value === 'ALL' ? 'ALL' : Number.parseInt(e.target.value, 10);
                 setSelectedAccountId(val);
                 setCurrentPage(1);
               }}
@@ -403,7 +604,7 @@ export const TransactionsPage: React.FC = () => {
             <select
               value={selectedCategoryId}
               onChange={e => {
-                const val = e.target.value === 'ALL' ? 'ALL' : parseInt(e.target.value, 10);
+                const val = e.target.value === 'ALL' ? 'ALL' : Number.parseInt(e.target.value, 10);
                 setSelectedCategoryId(val);
                 setCurrentPage(1);
               }}
@@ -486,296 +687,134 @@ export const TransactionsPage: React.FC = () => {
       </Card>
 
       {/* Tabela de Transações / Estados de Feedback */}
-      {isLoading ? (
-        <LoadingState lines={6} />
-      ) : isError ? (
-        <ErrorState
-          title="Erro ao carregar movimentações"
-          message="Não foi possível obter o extrato. Tente novamente mais tarde."
-          onRetry={refetch}
-        />
-      ) : transactions.length === 0 ? (
-        <EmptyState
-          icon={<Filter size={40} />}
-          title="Nenhuma movimentação encontrada"
-          description={
+      {(() => {
+        if (isLoading) {
+          return <LoadingState lines={6} />;
+        }
+
+        if (isError) {
+          return (
+            <ErrorState
+              title="Erro ao carregar movimentações"
+              message="Não foi possível obter o extrato. Tente novamente mais tarde."
+              onRetry={refetch}
+            />
+          );
+        }
+
+        if (transactions.length === 0) {
+          const emptyDescription =
             searchTerm || selectedType !== 'ALL' || selectedAccountId !== 'ALL'
               ? 'Tente ajustar os filtros do extrato para visualizar mais dados.'
-              : 'Registre sua primeira movimentação financeira para ver seu extrato detalhado.'
-          }
-          action={
-            <Button onClick={handleOpenCreateModal}>
-              <Plus size={16} />
-              Nova Movimentação
-            </Button>
-          }
-        />
-      ) : (
-        <Card style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table
-              style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                textAlign: 'left',
-                fontSize: '0.875rem',
-              }}
-            >
-              <thead>
-                <tr
-                  style={{
-                    backgroundColor: 'var(--bg-muted)',
-                    borderBottom: '1px solid var(--border-light)',
-                    color: 'var(--text-muted)',
-                  }}
-                >
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Data</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Descrição</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Categoria</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Conta</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Status</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, textAlign: 'right' }}>
-                    Valor
-                  </th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, textAlign: 'center' }}>
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map(tx => {
-                  const isIncome = tx.type === 'INCOME';
-                  const isExpense = tx.type === 'EXPENSE';
-                  const isTransfer = tx.type === 'TRANSFER';
-                  const amountNum = parseFloat(tx.amount) || 0;
+              : 'Registre sua primeira movimentação financeira para ver seu extrato detalhado.';
 
-                  return (
-                    <tr
+          return (
+            <EmptyState
+              icon={<Filter size={40} />}
+              title="Nenhuma movimentação encontrada"
+              description={emptyDescription}
+              action={
+                <Button onClick={handleOpenCreateModal}>
+                  <Plus size={16} />
+                  Nova Movimentação
+                </Button>
+              }
+            />
+          );
+        }
+
+        return (
+          <Card style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table
+                style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  textAlign: 'left',
+                  fontSize: '0.875rem',
+                }}
+              >
+                <thead>
+                  <tr
+                    style={{
+                      backgroundColor: 'var(--bg-muted)',
+                      borderBottom: '1px solid var(--border-light)',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
+                    <th style={{ padding: '12px 16px', fontWeight: 600 }}>Data</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 600 }}>Descrição</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 600 }}>Categoria</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 600 }}>Conta</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 600 }}>Status</th>
+                    <th style={{ padding: '12px 16px', fontWeight: 600, textAlign: 'right' }}>
+                      Valor
+                    </th>
+                    <th style={{ padding: '12px 16px', fontWeight: 600, textAlign: 'center' }}>
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map(tx => (
+                    <TransactionRow
                       key={tx.id}
-                      style={{
-                        borderBottom: '1px solid var(--border-light)',
-                        transition: 'background-color var(--transition-fast)',
-                      }}
-                    >
-                      {/* Data */}
-                      <td
-                        style={{
-                          padding: '12px 16px',
-                          color: 'var(--text-muted)',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Calendar size={14} />
-                          {formatDate(tx.date)}
-                        </div>
-                      </td>
-
-                      {/* Descrição & Notas */}
-                      <td
-                        style={{ padding: '12px 16px', color: 'var(--text-main)', fontWeight: 500 }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div
-                            style={{
-                              width: '28px',
-                              height: '28px',
-                              borderRadius: '50%',
-                              backgroundColor: isIncome
-                                ? 'rgba(16, 185, 129, 0.15)'
-                                : isExpense
-                                  ? 'rgba(239, 68, 68, 0.15)'
-                                  : 'rgba(59, 130, 246, 0.15)',
-                              color: isIncome
-                                ? 'var(--income-text)'
-                                : isExpense
-                                  ? 'var(--expense-text)'
-                                  : 'var(--primary-600)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {isIncome && <ArrowDownLeft size={16} />}
-                            {isExpense && <ArrowUpRight size={16} />}
-                            {isTransfer && <ArrowLeftRight size={16} />}
-                          </div>
-                          <div>
-                            <div>{tx.description}</div>
-                            {tx.payment_method && (
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                {tx.payment_method}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Categoria */}
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        {isTransfer ? (
-                          <Badge variant="neutral">Transferência</Badge>
-                        ) : tx.category ? (
-                          <span
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              padding: '2px 8px',
-                              borderRadius: 'var(--radius-full)',
-                              fontSize: '0.75rem',
-                              fontWeight: 500,
-                              backgroundColor: tx.category.color
-                                ? `${tx.category.color}20`
-                                : 'var(--bg-muted)',
-                              color: tx.category.color || 'var(--text-main)',
-                            }}
-                          >
-                            {tx.category.name}
-                          </span>
-                        ) : (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-                            Geral
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Conta */}
-                      <td
-                        style={{
-                          padding: '12px 16px',
-                          color: 'var(--text-muted)',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {isTransfer ? (
-                          <span>
-                            {tx.account?.name} → {tx.destination_account?.name}
-                          </span>
-                        ) : (
-                          <span>{tx.account?.name || 'Conta Padrão'}</span>
-                        )}
-                      </td>
-
-                      {/* Status */}
-                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                        {tx.status === 'COMPLETED' ? (
-                          <Badge variant="success">Efetivada</Badge>
-                        ) : tx.status === 'PENDING' ? (
-                          <Badge variant="warning">Pendente</Badge>
-                        ) : (
-                          <Badge variant="danger">Cancelada</Badge>
-                        )}
-                      </td>
-
-                      {/* Valor */}
-                      <td
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'right',
-                          fontWeight: 700,
-                          whiteSpace: 'nowrap',
-                          color: isIncome
-                            ? 'var(--income-text)'
-                            : isExpense
-                              ? 'var(--expense-text)'
-                              : 'var(--primary-600)',
-                        }}
-                      >
-                        {isIncome && '+ '}
-                        {isExpense && '- '}
-                        {formatCurrency(amountNum)}
-                      </td>
-
-                      {/* Ações */}
-                      <td
-                        style={{ padding: '12px 16px', textAlign: 'center', whiteSpace: 'nowrap' }}
-                      >
-                        <div style={{ display: 'inline-flex', gap: 'var(--spacing-xs)' }}>
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEditModal(tx)}
-                            style={{
-                              padding: '6px',
-                              borderRadius: 'var(--radius-sm)',
-                              color: 'var(--text-muted)',
-                              cursor: 'pointer',
-                              display: 'flex',
-                            }}
-                            title="Editar movimentação"
-                            aria-label="Editar movimentação"
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteTransaction(tx.id)}
-                            style={{
-                              padding: '6px',
-                              borderRadius: 'var(--radius-sm)',
-                              color: 'var(--expense-text)',
-                              cursor: 'pointer',
-                              display: 'flex',
-                            }}
-                            title="Excluir movimentação"
-                            aria-label="Excluir movimentação"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Paginação */}
-          {pagination && pagination.last_page > 1 && (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: 'var(--spacing-md) var(--spacing-lg)',
-                borderTop: '1px solid var(--border-light)',
-                backgroundColor: 'var(--bg-surface)',
-              }}
-            >
-              <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                Página {pagination.current_page} de {pagination.last_page} ({pagination.total}{' '}
-                transações)
-              </span>
-              <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
-                <Button
-                  variant="secondary"
-                  disabled={pagination.current_page <= 1}
-                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  variant="secondary"
-                  disabled={pagination.current_page >= pagination.last_page}
-                  onClick={() => setCurrentPage(p => Math.min(p + 1, pagination.last_page))}
-                >
-                  Próxima
-                </Button>
-              </div>
+                      tx={tx}
+                      onEdit={handleOpenEditModal}
+                      onDelete={handleDeleteTransaction}
+                    />
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </Card>
-      )}
+
+            {/* Paginação */}
+            {pagination && pagination.last_page > 1 && (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: 'var(--spacing-md) var(--spacing-lg)',
+                  borderTop: '1px solid var(--border-light)',
+                  backgroundColor: 'var(--bg-surface)',
+                }}
+              >
+                <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                  Página {pagination.current_page} de {pagination.last_page} ({pagination.total}{' '}
+                  transações)
+                </span>
+                <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
+                  <Button
+                    variant="secondary"
+                    disabled={pagination.current_page <= 1}
+                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    disabled={pagination.current_page >= pagination.last_page}
+                    onClick={() => setCurrentPage(p => Math.min(p + 1, pagination.last_page))}
+                  >
+                    Próxima
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        );
+      })()}
 
       {/* Modal de Criação / Edição */}
-      <TransactionFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        transactionToEdit={transactionToEdit}
-      />
+      {isModalOpen && (
+        <TransactionFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleModalSubmit}
+          transactionToEdit={transactionToEdit}
+        />
+      )}
     </div>
   );
 };

@@ -27,10 +27,35 @@ import { MetricKpiCard } from '../components/MetricKpiCard';
 import type { TransactionType } from '@/features/transactions/types/transaction.types';
 import type { TransactionSchemaType } from '@/features/transactions/schemas/transaction.schema';
 
+function getTransactionTypeVisuals(type: TransactionType) {
+  if (type === 'INCOME') {
+    return {
+      bgColor: 'rgba(16, 185, 129, 0.15)',
+      color: 'var(--income-text)',
+      amountColor: 'var(--income-text)',
+      prefix: '+ ',
+    };
+  }
+  if (type === 'EXPENSE') {
+    return {
+      bgColor: 'rgba(239, 68, 68, 0.15)',
+      color: 'var(--expense-text)',
+      amountColor: 'var(--expense-text)',
+      prefix: '- ',
+    };
+  }
+  return {
+    bgColor: 'rgba(59, 130, 246, 0.15)',
+    color: 'var(--primary-600)',
+    amountColor: 'var(--primary-600)',
+    prefix: '',
+  };
+}
+
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { accounts } = useAccounts();
-  const { createTransaction } = useTransactions();
+  const { createTransaction } = useTransactions(undefined, { enabled: false });
   const { metrics, cashFlow, expensesByCategory, recentTransactions, isLoading, isError, refetch } =
     useDashboard();
 
@@ -64,10 +89,10 @@ export const DashboardPage: React.FC = () => {
     );
   }
 
-  const totalBalanceNum = parseFloat(metrics?.total_balance || '0');
-  const monthlyIncomeNum = parseFloat(metrics?.monthly_income || '0');
-  const monthlyExpenseNum = parseFloat(metrics?.monthly_expense || '0');
-  const monthlyNetNum = parseFloat(metrics?.monthly_net || '0');
+  const totalBalanceNum = Number.parseFloat(metrics?.total_balance || '0');
+  const monthlyIncomeNum = Number.parseFloat(metrics?.monthly_income || '0');
+  const monthlyExpenseNum = Number.parseFloat(metrics?.monthly_expense || '0');
+  const monthlyNetNum = Number.parseFloat(metrics?.monthly_net || '0');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
@@ -192,7 +217,8 @@ export const DashboardPage: React.FC = () => {
                 const isIncome = tx.type === 'INCOME';
                 const isExpense = tx.type === 'EXPENSE';
                 const isTransfer = tx.type === 'TRANSFER';
-                const val = parseFloat(tx.amount) || 0;
+                const val = Number.parseFloat(tx.amount) || 0;
+                const visuals = getTransactionTypeVisuals(tx.type);
 
                 return (
                   <div
@@ -212,16 +238,8 @@ export const DashboardPage: React.FC = () => {
                           width: '32px',
                           height: '32px',
                           borderRadius: '50%',
-                          backgroundColor: isIncome
-                            ? 'rgba(16, 185, 129, 0.15)'
-                            : isExpense
-                              ? 'rgba(239, 68, 68, 0.15)'
-                              : 'rgba(59, 130, 246, 0.15)',
-                          color: isIncome
-                            ? 'var(--income-text)'
-                            : isExpense
-                              ? 'var(--expense-text)'
-                              : 'var(--primary-600)',
+                          backgroundColor: visuals.bgColor,
+                          color: visuals.color,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -251,15 +269,10 @@ export const DashboardPage: React.FC = () => {
                       style={{
                         fontWeight: 700,
                         fontSize: '0.875rem',
-                        color: isIncome
-                          ? 'var(--income-text)'
-                          : isExpense
-                            ? 'var(--expense-text)'
-                            : 'var(--primary-600)',
+                        color: visuals.amountColor,
                       }}
                     >
-                      {isIncome && '+ '}
-                      {isExpense && '- '}
+                      {visuals.prefix}
                       {formatCurrency(val)}
                     </div>
                   </div>
@@ -326,7 +339,7 @@ export const DashboardPage: React.FC = () => {
 
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                    {formatCurrency(parseFloat(acc.current_balance) || 0)}
+                    {formatCurrency(Number.parseFloat(acc.current_balance) || 0)}
                   </div>
                   <Badge
                     variant={acc.is_active ? 'success' : 'neutral'}
@@ -358,12 +371,14 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Modal de Transação Rápida */}
-      <TransactionFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleModalSubmit}
-        defaultType={modalType}
-      />
+      {isModalOpen && (
+        <TransactionFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleModalSubmit}
+          defaultType={modalType}
+        />
+      )}
     </div>
   );
 };

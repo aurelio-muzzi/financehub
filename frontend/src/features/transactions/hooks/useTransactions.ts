@@ -6,12 +6,19 @@ import type {
   UpdateTransactionPayload,
 } from '../types/transaction.types';
 
-export function useTransactions(filters?: TransactionFilters) {
+const EMPTY_TRANSACTIONS: never[] = [];
+
+export function useTransactions(
+  filters?: TransactionFilters,
+  options?: { enabled?: boolean }
+) {
   const queryClient = useQueryClient();
+  const isEnabled = options?.enabled ?? true;
 
   const transactionsQuery = useQuery({
     queryKey: ['transactions', filters],
     queryFn: () => transactionsService.getTransactions(filters),
+    enabled: isEnabled,
   });
 
   const summaryQuery = useQuery({
@@ -29,15 +36,16 @@ export function useTransactions(filters?: TransactionFilters) {
         start_date: filters?.start_date,
         end_date: filters?.end_date,
       }),
+    enabled: isEnabled,
   });
 
   const createMutation = useMutation({
     mutationFn: (payload: CreateTransactionPayload) =>
       transactionsService.createTransaction(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
@@ -45,30 +53,30 @@ export function useTransactions(filters?: TransactionFilters) {
     mutationFn: ({ id, payload }: { id: number; payload: UpdateTransactionPayload }) =>
       transactionsService.updateTransaction(id, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => transactionsService.deleteTransaction(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['accounts'] });
     },
   });
 
   return {
-    transactions: transactionsQuery.data?.data ?? [],
+    transactions: transactionsQuery.data?.data ?? EMPTY_TRANSACTIONS,
     pagination: transactionsQuery.data?.meta,
     summary: summaryQuery.data,
     isLoading: transactionsQuery.isLoading || summaryQuery.isLoading,
     isError: transactionsQuery.isError || summaryQuery.isError,
     refetch: () => {
-      transactionsQuery.refetch();
-      summaryQuery.refetch();
+      void transactionsQuery.refetch();
+      void summaryQuery.refetch();
     },
     createTransaction: createMutation.mutateAsync,
     updateTransaction: updateMutation.mutateAsync,
