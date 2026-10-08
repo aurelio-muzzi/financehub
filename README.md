@@ -21,6 +21,16 @@ O projeto conta com arquitetura modular desacoplada: **Backend RESTful em Larave
 
 ---
 
+## 🎥 Demonstração em Vídeo
+
+Confira a visão geral das funcionalidades, interface dark mode e fluxo de gestão no vídeo abaixo:
+
+[![Demonstração em Vídeo](https://img.youtube.com/vi/WiFxcvDt2uA/maxresdefault.jpg)](https://www.youtube.com/watch?v=WiFxcvDt2uA)
+
+> 💡 *Clique na imagem acima para assistir ao vídeo de demonstração completo no YouTube.*
+
+---
+
 ## 🚀 Principais Funcionalidades
 
 ### 📊 1. Dashboard e Inteligência Financeira
